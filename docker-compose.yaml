@@ -28,7 +28,7 @@ services:
     ports:
       - "${DJANGO_HOST_PORT:-5000}:${DJANGO_CONTAINER_PORT:-5000}"
     volumes:
-      - backend_data:/app/data    
+      - backend_data:/app   
     restart: unless-stopped
     networks:
       - conduit
