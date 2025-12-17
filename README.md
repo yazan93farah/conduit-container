@@ -13,7 +13,7 @@ Docker Compose is used to manage and deploy the complete application stack.
    - [Stop Docker Container](#Stop-Docker-Container)
    - [Delete Docker Container](#Delete-Docker-Container)
 4. [Logs](#Logs)
-5. [EnvironmentVariables](#Environment Variables)
+5. [Environment Variables](#environment-variables)
 
 ## Prerequisites
 - Docker 
@@ -106,6 +106,7 @@ To save logs in a file use:
 docker logs [container-name] > <container-name>-logs.txt
 ```
 ## Environment Variables 
+This Environment variables can be modified in the example.env before being copied 
 
 ### Backend  
 ```env
