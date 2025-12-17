@@ -24,7 +24,6 @@ Docker Compose is used to manage and deploy the complete application stack.
 git clone git@github.com:yazan93farah/conduit-container.git
 ```
 
-
 2. Navigate to the Cloned Repo-Direcotry: 
 ```bash
 cd conduit-container
@@ -50,7 +49,6 @@ Navigate Back to Root:
 ```bash
 cd ..
 ```
-
 
 5. Copy your Frontend Environement file.
 Naviagte: 
