@@ -13,6 +13,7 @@ Docker Compose is used to manage and deploy the complete application stack.
    - [Stop Docker Container](#Stop-Docker-Container)
    - [Delete Docker Container](#Delete-Docker-Container)
 4. [Logs](#Logs)
+5. [EnvironmentVariables](#Environment Variables)
 
 ## Prerequisites
 - Docker 
@@ -103,4 +104,20 @@ docker logs [container-name]
 To save logs in a file use:
 ```bash
 docker logs [container-name] > <container-name>-logs.txt
+```
+## Environment Variables 
+
+### Backend  
+```env
+DJANGO_CONTAINER_PORT=5000        # Django internal port
+WORKERS=2                        # Gunicorn worker count
+DJANGO_SUPERUSER_EMAIL=testaccount@gmail.com   # Admin user email
+DJANGO_SUPERUSER_USERNAME=testingaccount       # Admin username
+DJANGO_SUPERUSER_PASSWORD=AccountPasswordStrong123 # Admin password
+ALLOWED_HOSTS=localhost,127.0.0.1 # Allowed request hosts
+CORS_ORIGIN_WHITELIST=0.0.0.0:8282,localhost:8282 # Allowed origins 
+```
+### Frontend
+```env
+API_URL=http://localhost:5000/api # Backend API endpoint
 ```
