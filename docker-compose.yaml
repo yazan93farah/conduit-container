@@ -19,7 +19,6 @@ services:
       - .database.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
   backend:
     build:
       context: ./conduit-backend
@@ -37,7 +36,6 @@ services:
       - conduit
     depends_on:
       - database
-
 volumes:
   postgres_data:
 networks:
