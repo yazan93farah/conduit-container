@@ -1,3 +1,5 @@
 .venv-backend
 .venv-frontend
 .python-version
+.env
+.database.env
