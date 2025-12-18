@@ -94,9 +94,21 @@ docker compose down
 
 ### Accessing Django Admin Console
 
+to Start the admin Console for Django use:
 ```text
-http://<your-ip>:<port>/admin  default port is 5000 
+http://<your-ip>:<django-port>/admin  # default port is 5000 
 ```
+Authentication is performed using credentials provided via environment variables.
+For security reasons, these credentials should be changed after the initial login.
+
+### Angular App
+
+to Start the Angular App use:
+```text
+http://<your-ip>:<angular-port>   # default port is 8282 
+```
+Users must first complete the sign-up process, then log in to begin posting articles. 
+
 ## Logs 
 ### Show Logs Docker Container 
 To show the Container logs use: 
