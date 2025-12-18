@@ -69,7 +69,7 @@ cd ..
 ```
 6. Copy the Database Environement File: 
 ```bash
-cp example.database.env database.env
+cp example.database.env .database.env
 ```
 
 7. Build Docker Compose 
