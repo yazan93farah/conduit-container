@@ -35,7 +35,7 @@ cd conduit-container
 git submodule update --init --recursive
 ```
 
-4. Copy your Backend Environement file.
+4. Copy Backend Environement file.
 Naviagte: 
 ```bash
 cd conduit-backend
@@ -51,7 +51,8 @@ Navigate Back to Root:
 cd ..
 ```
 
-5. Copy your Frontend Environement file.
+
+5. Copy Frontend Environement file.
 Naviagte: 
 ```bash
 cd conduit-frontend
@@ -66,13 +67,17 @@ Navigate Back to Root:
 ```bash
 cd ..
 ```
+6. Copy the Database Environement File: 
+```bash
+cp example.database.env database.env
+```
 
-6. Build Docker Compose 
+7. Build Docker Compose 
 ```bash
 docker compose build 
 ```
 
-7. Start Docker Compose 
+8. Start Docker Compose 
 ```bash
 docker compose up -d 
 ```

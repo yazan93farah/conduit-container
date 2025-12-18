@@ -3,36 +3,42 @@ services:
     build:
       context: ./conduit-frontend
       dockerfile: Dockerfile
-    container_name: frontend
-
+    container_name: frontend-container
     environment:
       ANGULAR_HOST_PORT: "${ANGULAR_HOST_PORT:-8282}"
       API_URL: "${API_URL:-http://localhost:5000/api}"
-
     ports:
       - "${ANGULAR_HOST_PORT:-8282}:80"
     restart: unless-stopped
     networks:
       - conduit
+  database:
+    image: postgres:9.6
+    container_name: database-container
+    env_file:
+      - .database.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   backend:
     build:
       context: ./conduit-backend
       dockerfile: Dockerfile
+    container_name: backend-container
     environment:
       DJANGO_HOST_PORT: "${DJANGO_HOST_PORT:-5000}"
     env_file:
-    - ./conduit-backend/.env
+      - ./conduit-backend/.env
+      - .database.env
     ports:
       - "${DJANGO_HOST_PORT:-5000}:5000"
-    volumes:
-      - backend_data:/app   
     restart: unless-stopped
     networks:
       - conduit
-
+    depends_on:
+      - database
 
 volumes:
-  backend_data:
+  postgres_data:
 networks:
-    conduit:
+  conduit:
