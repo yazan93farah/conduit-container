@@ -80,20 +80,23 @@ docker compose up -d
 
 
 ## Usage 
-### start Docker Container 
+### start and Stop Docker Container 
 To Stop the Container use the following Command: 
 ```bash
 docker compose up -d 
 ```
 -d  Detached mode: Run containers in the background
 
-
-### Stop Docker Container 
-To Stop the Container use the following Command: 
+and To Stop the Container use the following Command: 
 ```bash
 docker compose down 
 ```
 
+### Accessing Django Admin Console
+
+```text
+http://<your-ip>:<port>/admin  default port is 5000 
+```
 ## Logs 
 ### Show Logs Docker Container 
 To show the Container logs use: 
@@ -110,7 +113,7 @@ This Environment variables can be modified in the example.env before being copie
 
 ### Backend  
 ```env
-DJANGO_CONTAINER_PORT=5000        # Django internal port
+DJANGO_HOST_PORT=5000        # Change DJANGO application port 
 WORKERS=2                        # Gunicorn worker count
 DJANGO_SUPERUSER_EMAIL=testaccount@gmail.com   # Admin user email
 DJANGO_SUPERUSER_USERNAME=testingaccount       # Admin username
@@ -121,4 +124,6 @@ CORS_ORIGIN_WHITELIST=0.0.0.0:8282,localhost:8282 # Allowed origins
 ### Frontend
 ```env
 API_URL=http://localhost:5000/api # Backend API endpoint
+ANGULAR_HOST_PORT=8282 # Change Angular application port 
+
 ```
