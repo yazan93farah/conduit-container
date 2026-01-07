@@ -1,0 +1,10 @@
+name: deployment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ssh:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "workflow visible and safe"
