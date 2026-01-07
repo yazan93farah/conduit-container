@@ -1,9 +1,12 @@
 name: deployment
 
 on:
-  workflow_dispatch:
   push:
-    branches: ["master"]
+    branches:
+      - master
+      - ghActions-deployment-workflow
+  workflow_dispatch:
+
 
 jobs:
   ssh:
@@ -18,6 +21,8 @@ jobs:
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           if_key_exists: fail
+          known_hosts: unnecessary
+
 
       - name: Add VM to known_hostsv
         run: |
