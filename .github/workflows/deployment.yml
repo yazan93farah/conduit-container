@@ -61,11 +61,11 @@ jobs:
           echo "BACKEND_DJANGO_SECRET_KEY=${{ secrets.BACKEND_DJANGO_SECRET_KEY }}" >> backend.env
       - name: Generate database env
         run: |
-          echo "DATABASE_POSTGRES_DB=${{ secrets.DATABASE_POSTGRES_DB }}" > database.env
-          echo "DATABASE_POSTGRES_USER=${{ secrets.DATABASE_POSTGRES_USER }}" >> database.env
-          echo "DATABASE_POSTGRES_PASSWORD=${{ secrets.DATABASE_POSTGRES_PASSWORD }}" >> database.env
-          echo "DATABASE_POSTGRES_HOST=${{ secrets.DATABASE_POSTGRES_HOST }}" >> database.env
-          echo "DATABASE_POSTGRES_PORT=${{ secrets.DATABASE_POSTGRES_PORT }}" >> database.env
+          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" > database.env
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> database.env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> database.env
+          echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}" >> database.env
+          echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" >> database.env
       - name: Generate frontend env
         run: |
           echo "FRONTEND_SERVER_API_URL=${{ secrets.FRONTEND_SERVER_API_URL }}" > frontend.env
