@@ -7,28 +7,102 @@ on:
       - ghActions-deployment-workflow
   workflow_dispatch:
 
-
 jobs:
-  ssh:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io \
+            -u ${{ github.repository_owner }} --password-stdin
+
+      - name: Build & push backend image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/conduit-backend:latest ./conduit-backend
+          docker push ghcr.io/${{ github.repository_owner }}/conduit-backend:latest
+
+      - name: Build & push frontend image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/conduit-frontend:latest ./conduit-frontend
+          docker push ghcr.io/${{ github.repository_owner }}/conduit-frontend:latest
+
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Generate backend env
+        run: |
+          echo "BACKEND_DJANGO_HOST_PORT=${{ secrets.BACKEND_BACKEND_DJANGO_HOST_PORT }}" > backend.env
+          echo "BACKEND_WORKERS=${{ secrets.BACKEND_WORKERS }}" >> backend.env
+          echo "BACKEND_DJANGO_SUPERUSER_EMAIL=${{ secrets.BACKEND_DJANGO_SUPERUSER_EMAIL }}" >> backend.env
+          echo "BACKEND_DJANGO_SUPERUSER_USERNAME=${{ secrets.BACKEND_DJANGO_SUPERUSER_USERNAME }}" >> backend.env
+          echo "BACKEND_DJANGO_SUPERUSER_PASSWORD=${{ secrets.BACKEND_DJANGO_SUPERUSER_PASSWORD }}" >> backend.env
+          echo "BACKEND_ALLOWED_HOSTS=${{ secrets.BACKEND_ALLOWED_HOSTS }}" >> backend.env
+          echo "BACKEND_CORS_ORIGIN_WHITELIST=${{ secrets.BACKEND_CORS_ORIGIN_WHITELIST }}" >> backend.env
+          echo "BACKEND_DJANGO_SECRET_KEY=${{ secrets.BACKEND_DJANGO_SECRET_KEY }}" >> backend.env
+      - name: Generate database env
+        run: |
+          echo "DATABASE_POSTGRES_DB=${{ secrets.DATABASE_POSTGRES_DB }}" > .database.env
+          echo "DATABASE_POSTGRES_USER=${{ secrets.DATABASE_POSTGRES_USER }}" >> .database.env
+          echo "DATABASE_POSTGRES_PASSWORD=${{ secrets.DATABASE_POSTGRES_PASSWORD }}" >> .database.env
+          echo "DATABASE_POSTGRES_HOST=${{ secrets.DATABASE_POSTGRES_HOST }}" >> .database.env
+          echo "DATABASE_POSTGRES_PORT=${{ secrets.DATABASE_POSTGRES_PORT }}" >> .database.env
+      - name: Generate frontend env
+        run: |
+          echo "FRONTEND_SERVER_API_URL=${{ secrets.FRONTEND_SERVER_API_URL }}" > frontend.env
+          echo "FRONTEND_ANGULAR_HOST_PORT=${{ secrets.FRONTEND_ANGULAR_HOST_PORT }}" >> frontend.env
 
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
+
+
+      - name: Copy files to VM
+        uses: appleboy/scp-action@v1.0.0
         with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          if_key_exists: fail
-          known_hosts: unnecessary
+          source: |
+            docker-compose.yaml
+            .backend.env
+            .database.env
+            .frontend.env
+          target: /opt/conduit
 
+      # 4️⃣ Deploy on VM
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/conduit
+            docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin <<< ${{ secrets.GITHUB_TOKEN }}
+            docker compose pull
+            docker compose up -d
 
-      - name: Add VM to known_hostsv
-        run: |
-          ssh-keyscan -H "${{ secrets.VM_HOST }}" >> ~/.ssh/known_hosts
+      # - name: Install SSH key
+      #   uses: shimataro/ssh-key-action@v2
+      #   with:
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     if_key_exists: fail
+      #     known_hosts: unnecessary
 
-      - name: SSH connection test
-        run: |
-          ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
-            "echo 'SSH OK' && uname -a && docker --version && docker compose version"
+      # - name: Add VM to known_hostsv
+      #   run: |
+      #     ssh-keyscan -H "${{ secrets.VM_HOST }}" >> ~/.ssh/known_hosts
+
+      # - name: SSH connection test
+      #   run: |
+      #     ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
+      #       "echo 'SSH OK' && uname -a && docker --version && docker compose version"
