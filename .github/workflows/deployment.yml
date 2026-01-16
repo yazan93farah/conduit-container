@@ -26,13 +26,6 @@ jobs:
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io \
             -u ${{ github.repository_owner }} --password-stdin
 
-      - name: Debug paths
-        run: |
-          pwd
-          ls
-          ls conduit-backend
-          ls conduit-backend/Dockerfile
-
       - name: Build & push backend image
         run: |
           docker build \
@@ -78,6 +71,19 @@ jobs:
           echo "FRONTEND_SERVER_API_URL=${{ secrets.FRONTEND_SERVER_API_URL }}" > .frontend.env
           echo "FRONTEND_ANGULAR_HOST_PORT=${{ secrets.FRONTEND_ANGULAR_HOST_PORT }}" >> .frontend.env
 
+
+
+
+      - name: Debug files before SCP
+        run: |
+          echo "PWD:"
+          pwd
+          echo "Files in workspace:"
+          ls -la
+          echo "Env files:"
+          ls -la .backend.env .frontend.env .database.env || true
+          echo "Compose file:"
+          ls -la docker-compose.yaml || true
       - name: Copy files to VM
         uses: appleboy/scp-action@v1.0.0
         with:
