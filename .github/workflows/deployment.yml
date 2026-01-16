@@ -26,12 +26,18 @@ jobs:
 
       - name: Build & push backend image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/conduit-backend:latest ./conduit-backend
+          docker build \
+            -f conduit-backend/Dockerfile \
+            -t ghcr.io/${{ github.repository_owner }}/conduit-backend:latest \
+            conduit-backend
           docker push ghcr.io/${{ github.repository_owner }}/conduit-backend:latest
 
       - name: Build & push frontend image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/conduit-frontend:latest ./conduit-frontend
+          docker build \
+            -f conduit-frontend/Dockerfile \
+            -t ghcr.io/${{ github.repository_owner }}/conduit-frontend:latest \
+            conduit-frontend
           docker push ghcr.io/${{ github.repository_owner }}/conduit-frontend:latest
 
   deploy:
@@ -74,7 +80,7 @@ jobs:
             .backend.env
             .database.env
             .frontend.env
-          target: /opt/conduit    
+          target: /opt/conduit
 
       # 4️⃣ Deploy on VM
       - name: Deploy via SSH
