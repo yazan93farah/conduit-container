@@ -68,8 +68,8 @@ jobs:
           echo "DATABASE_POSTGRES_PORT=${{ secrets.DATABASE_POSTGRES_PORT }}" >> database.env
       - name: Generate frontend env
         run: |
-          echo "FRONTEND_SERVER_API_URL=${{ secrets.FRONTEND_SERVER_API_URL }}" > .frontend.env
-          echo "FRONTEND_ANGULAR_HOST_PORT=${{ secrets.FRONTEND_ANGULAR_HOST_PORT }}" >> .frontend.env
+          echo "FRONTEND_SERVER_API_URL=${{ secrets.FRONTEND_SERVER_API_URL }}" > frontend.env
+          echo "FRONTEND_ANGULAR_HOST_PORT=${{ secrets.FRONTEND_ANGULAR_HOST_PORT }}" >> frontend.env
 
 
 
@@ -107,18 +107,4 @@ jobs:
             docker compose pull
             docker compose up -d
 
-      # - name: Install SSH key
-      #   uses: shimataro/ssh-key-action@v2
-      #   with:
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     if_key_exists: fail
-      #     known_hosts: unnecessary
-
-      # - name: Add VM to known_hostsv
-      #   run: |
-      #     ssh-keyscan -H "${{ secrets.VM_HOST }}" >> ~/.ssh/known_hosts
-
-      # - name: SSH connection test
-      #   run: |
-      #     ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
-      #       "echo 'SSH OK' && uname -a && docker --version && docker compose version"
+    
