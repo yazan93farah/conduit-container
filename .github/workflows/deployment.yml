@@ -51,21 +51,21 @@ jobs:
         uses: actions/checkout@v4
       - name: Generate backend env
         run: |
-          echo "BACKEND_DJANGO_HOST_PORT=${{ secrets.BACKEND_BACKEND_DJANGO_HOST_PORT }}" > .backend.env
-          echo "BACKEND_WORKERS=${{ secrets.BACKEND_WORKERS }}" >> .backend.env
-          echo "BACKEND_DJANGO_SUPERUSER_EMAIL=${{ secrets.BACKEND_DJANGO_SUPERUSER_EMAIL }}" >> .backend.env
-          echo "BACKEND_DJANGO_SUPERUSER_USERNAME=${{ secrets.BACKEND_DJANGO_SUPERUSER_USERNAME }}" >> .backend.env
-          echo "BACKEND_DJANGO_SUPERUSER_PASSWORD=${{ secrets.BACKEND_DJANGO_SUPERUSER_PASSWORD }}" >> .backend.env
-          echo "BACKEND_ALLOWED_HOSTS=${{ secrets.BACKEND_ALLOWED_HOSTS }}" >> .backend.env
-          echo "BACKEND_CORS_ORIGIN_WHITELIST=${{ secrets.BACKEND_CORS_ORIGIN_WHITELIST }}" >> .backend.env
-          echo "BACKEND_DJANGO_SECRET_KEY=${{ secrets.BACKEND_DJANGO_SECRET_KEY }}" >> .backend.env
+          echo "BACKEND_DJANGO_HOST_PORT=${{ secrets.BACKEND_BACKEND_DJANGO_HOST_PORT }}" > backend.env
+          echo "BACKEND_WORKERS=${{ secrets.BACKEND_WORKERS }}" >> backend.env
+          echo "BACKEND_DJANGO_SUPERUSER_EMAIL=${{ secrets.BACKEND_DJANGO_SUPERUSER_EMAIL }}" >> backend.env
+          echo "BACKEND_DJANGO_SUPERUSER_USERNAME=${{ secrets.BACKEND_DJANGO_SUPERUSER_USERNAME }}" >> backend.env
+          echo "BACKEND_DJANGO_SUPERUSER_PASSWORD=${{ secrets.BACKEND_DJANGO_SUPERUSER_PASSWORD }}" >> backend.env
+          echo "BACKEND_ALLOWED_HOSTS=${{ secrets.BACKEND_ALLOWED_HOSTS }}" >> backend.env
+          echo "BACKEND_CORS_ORIGIN_WHITELIST=${{ secrets.BACKEND_CORS_ORIGIN_WHITELIST }}" >> backend.env
+          echo "BACKEND_DJANGO_SECRET_KEY=${{ secrets.BACKEND_DJANGO_SECRET_KEY }}" >> backend.env
       - name: Generate database env
         run: |
-          echo "DATABASE_POSTGRES_DB=${{ secrets.DATABASE_POSTGRES_DB }}" > .database.env
-          echo "DATABASE_POSTGRES_USER=${{ secrets.DATABASE_POSTGRES_USER }}" >> .database.env
-          echo "DATABASE_POSTGRES_PASSWORD=${{ secrets.DATABASE_POSTGRES_PASSWORD }}" >> .database.env
-          echo "DATABASE_POSTGRES_HOST=${{ secrets.DATABASE_POSTGRES_HOST }}" >> .database.env
-          echo "DATABASE_POSTGRES_PORT=${{ secrets.DATABASE_POSTGRES_PORT }}" >> .database.env
+          echo "DATABASE_POSTGRES_DB=${{ secrets.DATABASE_POSTGRES_DB }}" > database.env
+          echo "DATABASE_POSTGRES_USER=${{ secrets.DATABASE_POSTGRES_USER }}" >> database.env
+          echo "DATABASE_POSTGRES_PASSWORD=${{ secrets.DATABASE_POSTGRES_PASSWORD }}" >> database.env
+          echo "DATABASE_POSTGRES_HOST=${{ secrets.DATABASE_POSTGRES_HOST }}" >> database.env
+          echo "DATABASE_POSTGRES_PORT=${{ secrets.DATABASE_POSTGRES_PORT }}" >> database.env
       - name: Generate frontend env
         run: |
           echo "FRONTEND_SERVER_API_URL=${{ secrets.FRONTEND_SERVER_API_URL }}" > .frontend.env
@@ -81,7 +81,7 @@ jobs:
           echo "Files in workspace:"
           ls -la
           echo "Env files:"
-          ls -la .backend.env .frontend.env .database.env || true
+          ls -la backend.env frontend.env database.env || true
           echo "Compose file:"
           ls -la docker-compose.yaml || true
       - name: Copy files to VM
@@ -92,9 +92,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: |
             docker-compose.yaml
-            .backend.env
-            .database.env
-            .frontend.env
+            backend.env
+            database.env
+            frontend.env
           target: /opt/conduit
 
       # 4️⃣ Deploy on VM

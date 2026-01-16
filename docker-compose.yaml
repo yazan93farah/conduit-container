@@ -6,7 +6,7 @@ services:
     #   FRONTEND_ANGULAR_HOST_PORT: "${FRONTEND_ANGULAR_HOST_PORT:-8282}"
     #   FRONTEND_SERVER_API_URL: "${FRONTEND_SERVER_API_URL:-http://backend:5000/api}"
     env_file:
-      - .frontend.env
+      - frontend.env
     ports:
       - "${FRONTEND_ANGULAR_HOST_PORT:-8282}:80"
     restart: unless-stopped
@@ -17,7 +17,7 @@ services:
     image: postgres:9.6
     container_name: database-container
     env_file:
-      - .database.env
+      - database.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
@@ -30,8 +30,8 @@ services:
     # environment:
     #   BACKEND_DJANGO_HOST_PORT: "${BACKEND_DJANGO_HOST_PORT:-5000}"
     env_file:
-      - .backend.env
-      - .database.env
+      - backend.env
+      - database.env
     ports:
       - "${BACKEND_DJANGO_HOST_PORT:-5000}:5000"
     restart: unless-stopped
