@@ -139,18 +139,18 @@ POSTGRES_PORT=5432                    # Database port
 
 ### Backend  
 ```env
-DJANGO_HOST_PORT=5000        # Change DJANGO application port 
-WORKERS=2                        # Gunicorn worker count
-DJANGO_SUPERUSER_EMAIL=testaccount@gmail.com   # Admin user email
-DJANGO_SUPERUSER_USERNAME=testingaccount       # Admin username
-DJANGO_SUPERUSER_PASSWORD=AccountPasswordStrong123 # Admin password
-ALLOWED_HOSTS=localhost,127.0.0.1 # Allowed request hosts
-CORS_ORIGIN_WHITELIST=0.0.0.0:8282,localhost:8282 # Allowed origins 
-DJANGO_SECRET_KEY='your-Key'  # Django Secret Key (new Key must be generated)
+BACKEND_DJANGO_HOST_PORT=5000        # Change DJANGO application port 
+BACKEND_WORKERS=2                        # Gunicorn worker count
+BACKEND_DJANGO_SUPERUSER_EMAIL=testaccount@gmail.com   # Admin user email
+BACKEND_DJANGO_SUPERUSER_USERNAME=testingaccount       # Admin username
+BACKEND_DJANGO_SUPERUSER_PASSWORD=AccountPasswordStrong123 # Admin password
+BACKEND_ALLOWED_HOSTS=localhost,127.0.0.1 # Allowed request hosts
+BACKEND_CORS_ORIGIN_WHITELIST=0.0.0.0:8282,localhost:8282 # Allowed origins 
+BACKEND_DJANGO_SECRET_KEY='your-Key'  # Django Secret Key (new Key must be generated)
 ```
 ### Frontend
 ```env
-API_URL=http://localhost:5000/api # Backend API endpoint
-ANGULAR_HOST_PORT=8282 # Change Angular application port 
+FRONTEND_SERVER_API_URL=http://localhost:5000/api # Backend API endpoint
+FRONTEND_ANGULAR_HOST_PORT=8282 # Change Angular application port 
 
 ```

@@ -1,17 +1,18 @@
 services:
   frontend:
-    build:
-      context: ./conduit-frontend
-      dockerfile: Dockerfile
+    image: ghcr.io/yazan93farah/conduit-frontend:latest
     container_name: frontend-container
-    environment:
-      ANGULAR_HOST_PORT: "${ANGULAR_HOST_PORT:-8282}"
-      API_URL: "${API_URL:-http://localhost:5000/api}"
+    # environment:
+    #   FRONTEND_ANGULAR_HOST_PORT: "${FRONTEND_ANGULAR_HOST_PORT:-8282}"
+    #   FRONTEND_SERVER_API_URL: "${FRONTEND_SERVER_API_URL:-http://backend:5000/api}"
+    env_file:
+      - .frontend.env
     ports:
-      - "${ANGULAR_HOST_PORT:-8282}:80"
+      - "${FRONTEND_ANGULAR_HOST_PORT:-8282}:80"
     restart: unless-stopped
     networks:
       - conduit
+
   database:
     image: postgres:9.6
     container_name: database-container
@@ -19,26 +20,28 @@ services:
       - .database.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-    - conduit
-  backend:
-    build:
-      context: ./conduit-backend
-      dockerfile: Dockerfile
-    container_name: backend-container
-    environment:
-      DJANGO_HOST_PORT: "${DJANGO_HOST_PORT:-5000}"
-    env_file:
-      - ./conduit-backend/.env
-      - .database.env
-    ports:
-      - "${DJANGO_HOST_PORT:-5000}:5000"
     restart: unless-stopped
     networks:
       - conduit
+
+  backend:
+    image: ghcr.io/yazan93farah/conduit-backend:latest
+    container_name: backend-container
+    # environment:
+    #   BACKEND_DJANGO_HOST_PORT: "${BACKEND_DJANGO_HOST_PORT:-5000}"
+    env_file:
+      - .backend.env
+      - .database.env
+    ports:
+      - "${BACKEND_DJANGO_HOST_PORT:-5000}:5000"
+    restart: unless-stopped
     depends_on:
       - database
+    networks:
+      - conduit
+
 volumes:
   postgres_data:
+
 networks:
   conduit:
