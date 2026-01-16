@@ -24,6 +24,13 @@ jobs:
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io \
             -u ${{ github.repository_owner }} --password-stdin
 
+      - name: Debug paths
+        run: |
+          pwd
+          ls
+          ls conduit-backend
+          ls conduit-backend/Dockerfile
+
       - name: Build & push backend image
         run: |
           docker build \
