@@ -92,7 +92,7 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "docker-compose.yaml,backend.env,database.env,frontend.env"
-          target: /opt/conduit
+          target: "/home/${{ secrets.VM_USER }}/conduit-deployment"
 
       # 4️⃣ Deploy on VM
       - name: Deploy via SSH
@@ -102,7 +102,7 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /opt/conduit
+            cd "/home/${{ secrets.VM_USER }}/conduit-deployment"
             docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin <<< ${{ secrets.GITHUB_TOKEN }}
             docker compose pull
             docker compose up -d
