@@ -130,11 +130,11 @@ This Environment variables can be modified in the example.env before being copie
 
 ### Database
 ```env
-POSTGRES_DB=conduit                   # Database Name
-POSTGRES_USER=conduit_user            # Database username
-POSTGRES_PASSWORD=conduit_password    # Database password 
-POSTGRES_HOST=database                # Database host
-POSTGRES_PORT=5432                    # Database port
+DATABASE_POSTGRES_DB=conduit                   # Database Name
+DATABASE_POSTGRES_USER=conduit_user            # Database username
+DATABASE_POSTGRES_PASSWORD=conduit_password    # Database password 
+DATABASE_POSTGRES_HOST=database                # Database host
+DATABASE_POSTGRES_PORT=5432                    # Database port
 ```
 
 ### Backend  
