@@ -84,18 +84,28 @@ jobs:
           ls -la backend.env frontend.env database.env || true
           echo "Compose file:"
           ls -la docker-compose.yaml || true
+
       - name: Copy files to VM
-        uses: appleboy/scp-action@v1.0.0
+        uses: garygrossgarten/github-action-scp@release
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: |
-            docker-compose.yaml
-            backend.env
-            database.env
-            frontend.env
-          target: /opt/conduit
+          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
+          local: "docker-compose.yaml backend.env database.env frontend.env"
+          remote: "/opt/conduit"
+
+      # - name: Copy files to VM
+      #   uses: appleboy/scp-action@v1.0.0
+      #   with:
+      #     host: ${{ secrets.VM_HOST }}
+      #     username: ${{ secrets.VM_USER }}
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     source: |
+      #       docker-compose.yaml
+      #       backend.env
+      #       database.env
+      #       frontend.env
+      #     target: /opt/conduit
 
       # 4️⃣ Deploy on VM
       - name: Deploy via SSH
