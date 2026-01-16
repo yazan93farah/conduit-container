@@ -1,7 +1,6 @@
 services:
   frontend:
     image: ghcr.io/yazan93farah/conduit-frontend:latest
-    container_name: frontend-container
     # environment:
     #   FRONTEND_ANGULAR_HOST_PORT: "${FRONTEND_ANGULAR_HOST_PORT:-8282}"
     #   FRONTEND_SERVER_API_URL: "${FRONTEND_SERVER_API_URL:-http://backend:5000/api}"
@@ -15,7 +14,6 @@ services:
 
   database:
     image: postgres:9.6
-    container_name: database-container
     env_file:
       - database.env
     volumes:
@@ -26,7 +24,6 @@ services:
 
   backend:
     image: ghcr.io/yazan93farah/conduit-backend:latest
-    container_name: backend-container
     # environment:
     #   BACKEND_DJANGO_HOST_PORT: "${BACKEND_DJANGO_HOST_PORT:-5000}"
     env_file:
