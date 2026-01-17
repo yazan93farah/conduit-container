@@ -43,7 +43,7 @@ cd conduit-backend
 
 Copy the File: 
 ```bash
-cp example.env .env
+cp example.env ../backend.env
 ```
 
 Navigate Back to Root: 
@@ -60,7 +60,7 @@ cd conduit-frontend
 
 Copy the File: 
 ```bash
-cp example.env .env
+cp example.env ../frontend.env
 ```
 
 Navigate Back to Root: 
@@ -69,7 +69,7 @@ cd ..
 ```
 6. Copy the Database Environement File: 
 ```bash
-cp example.database.env .database.env
+cp example.database.env database.env
 ```
 
 7. Build Docker Compose 
@@ -114,6 +114,66 @@ http://<your-ip>:<angular-port>   # default port is 8282
 ```
 Users must first complete the sign-up process, then log in to begin posting articles. 
 
+## CI/CD Pipeline
+
+This pipeline builds new Docker images for both the **backend** and **frontend**, then deploys them to a virtual machine (VM).
+Deployment is done by copying the required files to the VM and running:
+
+```bash
+docker compose up -d
+```
+
+---
+
+### Trigger
+
+The CI/CD pipeline can be triggered in the following ways:
+
+1. A push to the **main branch**
+2. Manually, using the **Run workflow** button
+
+---
+
+### Secrets
+
+The following environment variables **must be added as repository secrets** for the CI/CD pipeline to run successfully:
+
+```env
+# Database Configuration
+POSTGRES_DB=conduit                     # Database name
+POSTGRES_USER=conduit_user              # Database username
+POSTGRES_PASSWORD=conduit_password      # Database password
+POSTGRES_HOST=database                  # Database host
+POSTGRES_PORT=5432                      # Database port
+
+# Backend Configuration
+BACKEND_DJANGO_HOST_PORT=5000            # Django application port
+BACKEND_WORKERS=2                        # Gunicorn worker count
+BACKEND_DJANGO_SUPERUSER_EMAIL=testaccount@gmail.com   # Admin email
+BACKEND_DJANGO_SUPERUSER_USERNAME=testingaccount       # Admin username
+BACKEND_DJANGO_SUPERUSER_PASSWORD=AccountPasswordStrong123 # Admin password
+BACKEND_ALLOWED_HOSTS=localhost,127.0.0.1               # Allowed hosts
+BACKEND_CORS_ORIGIN_WHITELIST=0.0.0.0:8282,localhost:8282 # Allowed CORS origins
+BACKEND_DJANGO_SECRET_KEY=your-key-here  # Django secret key (generate a new one)
+
+# Frontend Configuration
+FRONTEND_SERVER_API_URL=http://localhost:5000/api # Backend API URL
+FRONTEND_ANGULAR_HOST_PORT=8282                   # Angular application port
+
+# GithubAction Secrets
+VM_HOST=<your-vm-ip>
+VM_PORT=22 # ssh connection default port 22
+VM_USER=<your-user-id>
+SSH_PRIVATE_KEY=<your-vm-private-key>
+```
+
+### Notes
+
+* Ensure all secrets are configured **before** running the pipeline.
+* Never commit `.env` files or sensitive values directly to the repository.
+* Always generate a **new Django secret key** for production environments.
+
+
 ## Logs 
 ### Show Logs Docker Container 
 To show the Container logs use: 
@@ -152,5 +212,4 @@ BACKEND_DJANGO_SECRET_KEY='your-Key'  # Django Secret Key (new Key must be gener
 ```env
 FRONTEND_SERVER_API_URL=http://localhost:5000/api # Backend API endpoint
 FRONTEND_ANGULAR_HOST_PORT=8282 # Change Angular application port 
-
 ```
