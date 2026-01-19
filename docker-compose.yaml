@@ -1,9 +1,6 @@
 services:
   frontend:
     image: ghcr.io/yazan93farah/conduit-frontend:latest
-    # environment:
-    #   FRONTEND_ANGULAR_HOST_PORT: "${FRONTEND_ANGULAR_HOST_PORT:-8282}"
-    #   FRONTEND_SERVER_API_URL: "${FRONTEND_SERVER_API_URL:-http://backend:5000/api}"
     env_file:
       - frontend.env
     ports:
@@ -24,8 +21,6 @@ services:
 
   backend:
     image: ghcr.io/yazan93farah/conduit-backend:latest
-    # environment:
-    #   BACKEND_DJANGO_HOST_PORT: "${BACKEND_DJANGO_HOST_PORT:-5000}"
     env_file:
       - backend.env
       - database.env

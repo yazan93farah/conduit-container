@@ -26,20 +26,25 @@ jobs:
             -u ${{ github.repository_owner }} --password-stdin
 
       - name: Build & push backend image
-        run: |
-          docker build \
-            -f conduit-backend/Dockerfile \
-            -t ghcr.io/${{ github.repository_owner }}/conduit-backend:latest \
-            conduit-backend
-          docker push ghcr.io/${{ github.repository_owner }}/conduit-backend:latest
+        uses: docker/build-push-action@v5
+        with:
+          context: conduit-backend
+          file: conduit-backend/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/conduit-backend:latest
+            ghcr.io/${{ github.repository_owner }}/conduit-backend:${{ github.sha }}
 
       - name: Build & push frontend image
-        run: |
-          docker build \
-            -f conduit-frontend/Dockerfile \
-            -t ghcr.io/${{ github.repository_owner }}/conduit-frontend:latest \
-            conduit-frontend
-          docker push ghcr.io/${{ github.repository_owner }}/conduit-frontend:latest
+        uses: docker/build-push-action@v5
+        with:
+          context: conduit-frontend
+          file: conduit-frontend/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/conduit-frontend:latest
+            ghcr.io/${{ github.repository_owner }}/conduit-frontend:${{ github.sha }}
+          
 
   deploy:
     needs: build
@@ -49,29 +54,37 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Generate backend env
+        shell: bash
         run: |
-          echo "BACKEND_DJANGO_HOST_PORT=${{ secrets.BACKEND_BACKEND_DJANGO_HOST_PORT }}" > backend.env
-          echo "BACKEND_WORKERS=${{ secrets.BACKEND_WORKERS }}" >> backend.env
-          echo "BACKEND_DJANGO_SUPERUSER_EMAIL=${{ secrets.BACKEND_DJANGO_SUPERUSER_EMAIL }}" >> backend.env
-          echo "BACKEND_DJANGO_SUPERUSER_USERNAME=${{ secrets.BACKEND_DJANGO_SUPERUSER_USERNAME }}" >> backend.env
-          echo "BACKEND_DJANGO_SUPERUSER_PASSWORD=${{ secrets.BACKEND_DJANGO_SUPERUSER_PASSWORD }}" >> backend.env
-          echo "BACKEND_ALLOWED_HOSTS=${{ secrets.BACKEND_ALLOWED_HOSTS }}" >> backend.env
-          echo "BACKEND_CORS_ORIGIN_WHITELIST=${{ secrets.BACKEND_CORS_ORIGIN_WHITELIST }}" >> backend.env
-          echo "BACKEND_DJANGO_SECRET_KEY=${{ secrets.BACKEND_DJANGO_SECRET_KEY }}" >> backend.env
+          cat << EOF > backend.env
+          BACKEND_DJANGO_HOST_PORT=${{ secrets.BACKEND_BACKEND_DJANGO_HOST_PORT }}
+          BACKEND_WORKERS=${{ secrets.BACKEND_WORKERS }}
+          BACKEND_DJANGO_SUPERUSER_EMAIL=${{ secrets.BACKEND_DJANGO_SUPERUSER_EMAIL }}
+          BACKEND_DJANGO_SUPERUSER_USERNAME=${{ secrets.BACKEND_DJANGO_SUPERUSER_USERNAME }}
+          BACKEND_DJANGO_SUPERUSER_PASSWORD=${{ secrets.BACKEND_DJANGO_SUPERUSER_PASSWORD }}
+          BACKEND_ALLOWED_HOSTS=${{ secrets.BACKEND_ALLOWED_HOSTS }}
+          BACKEND_CORS_ORIGIN_WHITELIST=${{ secrets.BACKEND_CORS_ORIGIN_WHITELIST }}
+          BACKEND_DJANGO_SECRET_KEY=${{ secrets.BACKEND_DJANGO_SECRET_KEY }}
+          EOF
+
       - name: Generate database env
+        shell: bash
         run: |
-          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" > database.env
-          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> database.env
-          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> database.env
-          echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}" >> database.env
-          echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" >> database.env
+          cat << EOF > database.env
+          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
+          POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
+          EOF
+
       - name: Generate frontend env
+        shell: bash
         run: |
-          echo "FRONTEND_SERVER_API_URL=${{ secrets.FRONTEND_SERVER_API_URL }}" > frontend.env
-          echo "FRONTEND_ANGULAR_HOST_PORT=${{ secrets.FRONTEND_ANGULAR_HOST_PORT }}" >> frontend.env
-
-
-
+          cat << EOF > frontend.env
+          FRONTEND_SERVER_API_URL=${{ secrets.FRONTEND_SERVER_API_URL }}
+          FRONTEND_ANGULAR_HOST_PORT=${{ secrets.FRONTEND_ANGULAR_HOST_PORT }}
+          EOF
 
       - name: Debug files before SCP
         run: |
@@ -84,6 +97,19 @@ jobs:
           echo "Compose file:"
           ls -la docker-compose.yaml || true
 
+      - name: Ensure deployment directory exists
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            DEPLOY_DIR="/home/${{ secrets.VM_USER }}/conduit-deployment"
+
+            if [ ! -d "$DEPLOY_DIR" ]; then
+              mkdir -p "$DEPLOY_DIR"
+            fi
+
       - name: Copy files to VM
         uses: appleboy/scp-action@v1.0.0
         with:
@@ -93,8 +119,7 @@ jobs:
           source: "docker-compose.yaml,backend.env,database.env,frontend.env"
           target: "/home/${{ secrets.VM_USER }}/conduit-deployment"
 
-      # 4️⃣ Deploy on VM
-      - name: Deploy via SSH
+      - name: Deploy on VM via SSH
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VM_HOST }}
@@ -105,5 +130,7 @@ jobs:
             docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin <<< ${{ secrets.GITHUB_TOKEN }}
             docker compose pull
             docker compose up -d
+            docker image prune -a --filter "until=168h"
+
 
     
