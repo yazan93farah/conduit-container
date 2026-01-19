@@ -41,8 +41,6 @@ jobs:
           context: conduit-frontend
           file: conduit-frontend/Dockerfile
           push: true
-          build-args: |
-             FRONTEND_SERVER_API_URL=/api
           tags: |
             ghcr.io/${{ github.repository_owner }}/conduit-frontend:latest
             ghcr.io/${{ github.repository_owner }}/conduit-frontend:${{ github.sha }}
@@ -84,7 +82,6 @@ jobs:
         shell: bash
         run: |
           cat << EOF > frontend.env
-          FRONTEND_SERVER_API_URL=${{ secrets.FRONTEND_SERVER_API_URL }}
           FRONTEND_ANGULAR_HOST_PORT=${{ secrets.FRONTEND_ANGULAR_HOST_PORT }}
           EOF
 

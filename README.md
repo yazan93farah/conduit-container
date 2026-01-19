@@ -157,7 +157,6 @@ BACKEND_CORS_ORIGIN_WHITELIST=0.0.0.0:8282,localhost:8282 # Allowed CORS origins
 BACKEND_DJANGO_SECRET_KEY=your-key-here  # Django secret key (generate a new one)
 
 # Frontend Configuration
-FRONTEND_SERVER_API_URL=http://localhost:5000/api # Backend API URL
 FRONTEND_ANGULAR_HOST_PORT=8282                   # Angular application port
 
 # GithubAction Secrets
@@ -210,6 +209,5 @@ BACKEND_DJANGO_SECRET_KEY='your-Key'  # Django Secret Key (new Key must be gener
 ```
 ### Frontend
 ```env
-FRONTEND_SERVER_API_URL=http://localhost:5000/api # Backend API endpoint
 FRONTEND_ANGULAR_HOST_PORT=8282 # Change Angular application port 
 ```
