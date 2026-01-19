@@ -57,7 +57,7 @@ jobs:
         shell: bash
         run: |
           cat << EOF > backend.env
-          BACKEND_DJANGO_HOST_PORT=${{ secrets.BACKEND_BACKEND_DJANGO_HOST_PORT }}
+          BACKEND_DJANGO_HOST_PORT=${{ secrets.BACKEND_DJANGO_HOST_PORT }}
           BACKEND_WORKERS=${{ secrets.BACKEND_WORKERS }}
           BACKEND_DJANGO_SUPERUSER_EMAIL=${{ secrets.BACKEND_DJANGO_SUPERUSER_EMAIL }}
           BACKEND_DJANGO_SUPERUSER_USERNAME=${{ secrets.BACKEND_DJANGO_SUPERUSER_USERNAME }}
